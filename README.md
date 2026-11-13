@@ -60,6 +60,8 @@ make install    # 装到 /Applications（想用开机自启就用这个）
 
 图标就是状态：🔇 已静音 / 🎧 耳机已连、放行 / 🔊 屏蔽已关闭。
 
+同一时间**只会跑一个实例**：重复启动（再点一次、`make run`、LaunchAgent 和手动启动撞车）会提示「已经在运行」然后自己退出，不会冒出第二个菜单栏图标，也不会有两份实例互相把音量改来改去。
+
 ### 它是怎么做到的
 
 1. 用 CoreAudio 枚举所有**输出**设备，按 `kAudioDevicePropertyTransportType` 区分蓝牙、内置、HDMI、DisplayPort、USB、虚拟。
@@ -67,6 +69,7 @@ make install    # 装到 /Applications（想用开机自启就用这个）
 3. 监听三类事件，一有变化立刻重新压制：设备增删、默认输出变化、每台设备自己的音量/静音被改动。再加一个 2 秒看门狗兜底 —— **你用音量键、用脚本、用别的 App 调大音量，都会被压回 0**，控制中心里的滑块弹回去是预期行为。
 4. **HDMI / DisplayPort 显示器喇叭在 Apple Silicon 上根本没有音量或静音接口**（数字直通）。这类输出压不住时，程序把默认输出**改道**到一个已经被静音的出口（通常是内置扬声器），音频流进哑设备，外面照样听不见。"默认输出"和"系统提示音输出"两条路由都会处理。
 5. 压住任何设备之前，先把它的原始音量/静音状态记下来。正常退出、切规则、关屏蔽都会还原；就算程序被强杀，下次启动也会读到这笔记录把音量还回去，不会把你的 Mac 永久留在静音状态。
+6. **单实例**：启动时用 `flock` 抢一把 `~/Library/Application Support/SilenceGate/instance.lock` 的锁，抢不到就提示「已经在运行」并退出。用 `flock` 而不是 pid 文件，是为了进程被强杀时由内核自动释放锁 —— 既不会出现「僵尸锁把 App 挡在门外」，也不会两份实例并行。
 
 ### 已知限制
 
@@ -169,6 +172,8 @@ Click the menu bar icon; everything lives there:
 
 The icon is the state: 🔇 muted / 🎧 headphones connected, playing through them / 🔊 gate off.
 
+Only **one instance can run at a time**: launching a second one (clicking again, `make run`, or launch-at-login racing a manual start) shows an “already running” notice and exits, so you never get two menu bar icons — or two instances quietly fighting over your volume.
+
 ### How it works
 
 1. Enumerate every **output** device with CoreAudio and classify it by `kAudioDevicePropertyTransportType` (Bluetooth, built-in, HDMI, DisplayPort, USB, virtual).
@@ -176,6 +181,7 @@ The icon is the state: 🔇 muted / 🎧 headphones connected, playing through t
 3. Listen for three kinds of events and re-apply immediately: devices added/removed, default output changed, per-device volume/mute changed. A 2-second watchdog backs it up — **volume keys, scripts and other apps are all pushed back to zero**, and the Control Center slider snapping back is intended behaviour.
 4. **HDMI / DisplayPort monitor speakers expose no volume or mute control at all on Apple Silicon** (digital passthrough). When such an output cannot be silenced, the app **reroutes** the default output to a sink that is already muted (usually the built-in speakers), so the stream flows into a dead device and nothing is audible. Both the default output and the system-alert output routes are handled.
 5. Before muting any device, its original volume/mute state is recorded. Normal exit, mode changes and disabling all restore it; even after a hard kill, the next launch reads that record back and restores your volumes instead of leaving the Mac permanently muted.
+6. **Single instance**: at launch it takes an `flock` on `~/Library/Application Support/SilenceGate/instance.lock`; if the lock is already held it reports “already running” and exits. `flock` rather than a pid file, so the kernel releases the lock even after a hard kill — no zombie lock shutting you out, and no two instances running side by side.
 
 ### Known limits
 
