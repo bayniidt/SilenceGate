@@ -50,6 +50,14 @@ if arguments.contains("--help") || arguments.contains("-h") {
     exit(0)
 }
 
+if arguments.contains("--dump-menu") {
+    _ = NSApplication.shared
+    NSApp.setActivationPolicy(.accessory)
+    let controller = StatusController()
+    print(controller.dumpMenuTitles().joined(separator: "\n"))
+    exit(0)
+}
+
 if arguments.contains("--probe") {
     Diagnostics.printReport()
     exit(0)

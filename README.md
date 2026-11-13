@@ -82,6 +82,7 @@ make install    # 装到 /Applications（想用开机自启就用这个）
 /Applications/SilenceGate.app/Contents/MacOS/SilenceGate --selftest   # 静音 → 读回校验 → 还原
 /Applications/SilenceGate.app/Contents/MacOS/SilenceGate --help
 /Applications/SilenceGate.app/Contents/MacOS/SilenceGate --lang en --probe
+/Applications/SilenceGate.app/Contents/MacOS/SilenceGate --dump-menu        # 渲染菜单文本，排查 UI 问题
 ```
 
 `--selftest` 读法：`✓` 表示该设备确实被压到 0；`⚠️` 表示它没有音量接口，只能靠改道。
@@ -190,6 +191,7 @@ The icon is the state: 🔇 muted / 🎧 headphones connected, playing through t
 /Applications/SilenceGate.app/Contents/MacOS/SilenceGate --selftest   # mute → verify → restore
 /Applications/SilenceGate.app/Contents/MacOS/SilenceGate --help
 /Applications/SilenceGate.app/Contents/MacOS/SilenceGate --lang en --probe
+/Applications/SilenceGate.app/Contents/MacOS/SilenceGate --dump-menu        # render the menu as text, for UI debugging
 ```
 
 Reading `--selftest`: `✓` means the device really was driven to zero; `⚠️` means it has no volume control and can only be handled by rerouting.

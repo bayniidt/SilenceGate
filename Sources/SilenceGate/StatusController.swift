@@ -199,6 +199,24 @@ final class StatusController: NSObject, NSMenuDelegate {
         return submenu
     }
 
+    /// 调试用：把菜单渲染成文本（--dump-menu），不改动任何系统状态
+    func dumpMenuTitles() -> [String] {
+        let scratch = NSMenu()
+        menuNeedsUpdate(scratch)
+        var lines: [String] = []
+        func walk(_ menu: NSMenu, depth: Int) {
+            let pad = String(repeating: "  ", count: depth)
+            for item in menu.items {
+                if item.isSeparatorItem { lines.append(pad + "──────"); continue }
+                let mark = item.state == .on ? "[x] " : (item.state == .off ? "[ ] " : "")
+                lines.append(pad + mark + item.title)
+                if let sub = item.submenu { walk(sub, depth: depth + 1) }
+            }
+        }
+        walk(scratch, depth: 0)
+        return lines
+    }
+
     // MARK: - 动作
 
     @objc private func toggleEnabled() {
