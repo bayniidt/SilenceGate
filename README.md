@@ -1,5 +1,7 @@
 # SilenceGate
 
+<img src="docs/social-preview.png" alt="SilenceGate — sound only through your Bluetooth headphones" width="100%">
+
 **Sound only through your Bluetooth headphones — every other speaker stays dead silent.**
 
 [中文](#中文) · [English](#english)
@@ -97,7 +99,10 @@ make install    # 装到 /Applications（想用开机自启就用这个）
 ```
 Package.swift             Swift Package 描述
 Info.plist                App 元信息（LSUIElement：纯菜单栏，无 Dock 图标）
-Makefile                  build / run / install / probe / selftest
+Makefile                  build / run / install / probe / selftest / icon
+Resources/AppIcon.icns    App 图标
+docs/                     仓库横幅与 README 配图
+Tools/IconGen.swift       图标生成器（`make icon` 跑它）
 Sources/SilenceGate/
   CoreAudioSupport.swift  CoreAudio C API 封装
   AudioDevice.swift       输出设备模型 + 静音/音量接口探测
@@ -111,6 +116,8 @@ Sources/SilenceGate/
 ```
 
 `make app` 会产出 `SilenceGate.app`（ad-hoc 签名），`make install` 装到 `/Applications`。
+
+图标是代码画的，不是图片素材：`make icon` 用 CoreGraphics 重新生成 `Resources/AppIcon.icns` 和 `docs/` 里的配图，改 `Tools/IconGen.swift` 里的坐标就能调。
 
 ### License
 
@@ -209,7 +216,10 @@ Plain Swift + CoreAudio, no dependencies, no Xcode project:
 ```
 Package.swift             Swift Package manifest
 Info.plist                app metadata (LSUIElement: menu bar only, no Dock icon)
-Makefile                  build / run / install / probe / selftest
+Makefile                  build / run / install / probe / selftest / icon
+Resources/AppIcon.icns    the app icon
+docs/                     banner used by this README and the repo
+Tools/IconGen.swift       icon generator (run `make icon`)
 Sources/SilenceGate/
   CoreAudioSupport.swift  thin wrapper over the CoreAudio C API
   AudioDevice.swift       output device model + mute/volume capability probing
@@ -223,6 +233,8 @@ Sources/SilenceGate/
 ```
 
 `make app` produces `SilenceGate.app` (ad-hoc signed); `make install` copies it to `/Applications`.
+
+The icon is drawn in code rather than shipped as artwork: `make icon` regenerates `Resources/AppIcon.icns` and the images under `docs/` with CoreGraphics — tweak the coordinates in `Tools/IconGen.swift` to change it.
 
 ### License
 
