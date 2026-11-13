@@ -77,6 +77,11 @@ enum Key: String {
     // 弹窗
     case alertLoginTitle
     case alertLoginBody
+    case alertAlreadyRunningTitle
+    case alertAlreadyRunningBody
+    case diagInstance
+    case diagInstanceFree
+    case diagInstanceTaken
     case alertDiagTitle
     case alertLastEvent
     case alertOK
@@ -203,6 +208,12 @@ enum L {
         .alertLoginTitle: ("无法设置开机自启", "Could not enable launch at login"),
         .alertLoginBody: ("写入 LaunchAgents 失败。请先把 App 放到 /Applications 再试。",
                           "Failed to write the LaunchAgent. Move the app to /Applications and try again."),
+        .alertAlreadyRunningTitle: ("SilenceGate 已经在运行", "SilenceGate is already running"),
+        .alertAlreadyRunningBody: ("同一时间只能运行一个实例，请直接用菜单栏图标（🔇 / 🎧）操作。\n正在运行的进程：PID %@",
+                                   "Only one instance can run at a time. Use the menu bar icon (🔇 / 🎧) instead.\nRunning process: PID %@"),
+        .diagInstance: ("运行实例：%@", "Running instance: %@"),
+        .diagInstanceFree: ("没有其它实例", "no other instance"),
+        .diagInstanceTaken: ("已有实例 PID %@（本次启动会被拒绝）", "already running as PID %@ (a new launch would be refused)"),
         .alertDiagTitle: ("SilenceGate 诊断", "SilenceGate diagnostics"),
         .alertLastEvent: ("最近事件：%@", "Last event: %@"),
         .alertOK: ("好", "OK"),

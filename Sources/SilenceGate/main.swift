@@ -72,6 +72,23 @@ if let index = arguments.firstIndex(of: "--set-output"), index + 1 < arguments.c
     exit(Diagnostics.setOutput(matching: arguments[index + 1]))
 }
 
+// 单实例：已经有一份在跑就直接说清楚并退出，绝不并排跑第二份。
+if !SingleInstance.shared.claim() {
+    let app = NSApplication.shared
+    app.setActivationPolicy(.accessory)
+    // 少了 finishLaunching，runModal 会立刻返回、提示框根本不出现
+    app.finishLaunching()
+    let pidText = SingleInstance.shared.ownerPID.map { String($0) } ?? "?"
+    let alert = NSAlert()
+    alert.alertStyle = .informational
+    alert.messageText = L.t(.alertAlreadyRunningTitle)
+    alert.informativeText = L.t(.alertAlreadyRunningBody, pidText)
+    alert.addButton(withTitle: L.t(.alertOK))
+    NSApp.activate(ignoringOtherApps: true)
+    alert.runModal()
+    exit(0)
+}
+
 let app = NSApplication.shared
 let delegate = AppDelegate()
 AppDelegate.shared = delegate

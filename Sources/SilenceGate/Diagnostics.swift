@@ -18,6 +18,12 @@ enum Diagnostics {
         out.append(L.t(.diagDefaultOut, defaultID.map(String.init) ?? L.t(.none)))
         out.append(L.t(.diagSystemOut, systemID.map(String.init) ?? L.t(.none)))
         out.append(L.t(.diagRule, Preferences.shared.mode.title))
+        if let owner = SingleInstance.shared.probeOwner() {
+            let text = owner > 0 ? String(owner) : "?"
+            out.append(L.t(.diagInstance, L.t(.diagInstanceTaken, text)))
+        } else {
+            out.append(L.t(.diagInstance, L.t(.diagInstanceFree)))
+        }
         out.append(Preferences.shared.ignoreVirtualDevices ? L.t(.diagVirtualIgnored) : L.t(.diagVirtualMuted))
         out.append("")
         for device in devices {
